@@ -64,9 +64,9 @@ class MainActivity : AppCompatActivity() {
     }
     private val serviceConnection:ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            iRemoteService = IRemoteService.Stub.asInterface(service)
-            isBind = true
-            Toast.makeText(this@MainActivity,"注册成功！",Toast.LENGTH_SHORT).show()
+//            iRemoteService = IRemoteService.Stub.asInterface(service)
+//            isBind = true
+//            Toast.makeText(this@MainActivity,"注册成功！",Toast.LENGTH_SHORT).show()
 
             // 共享内存的形式获取 大数据
             val data = Parcel.obtain()
