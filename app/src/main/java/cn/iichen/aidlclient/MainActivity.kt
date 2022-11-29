@@ -4,12 +4,18 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Parcel
+import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import cn.iichen.aidlserver.IRemoteService
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.BufferedReader
+import java.io.FileDescriptor
+import java.io.FileReader
+
 
 class MainActivity : AppCompatActivity() {
     lateinit var iRemoteService:IRemoteService
@@ -61,6 +67,21 @@ class MainActivity : AppCompatActivity() {
             iRemoteService = IRemoteService.Stub.asInterface(service)
             isBind = true
             Toast.makeText(this@MainActivity,"注册成功！",Toast.LENGTH_SHORT).show()
+
+            // 共享内存的形式获取 大数据
+            val data = Parcel.obtain()
+            val reply = Parcel.obtain()
+            try {
+                //通过binder机制跨进程调用服务端的接口
+                service.transact(1, data, reply, 0)
+                //获得RemoteService创建的匿名共享内存的fd
+                val fd: FileDescriptor = reply.readFileDescriptor().fileDescriptor
+                //读取匿名共享内存中的数据，并打印log
+                val br = BufferedReader(FileReader(fd))
+                Log.d("iichen", br.readLine())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
